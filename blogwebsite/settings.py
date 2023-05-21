@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-c5jefi_y@(=5z%f9n%eb-1ir*jt&qj_jc2227z#)%9b!(40_@l
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['https://profound-malasada-a486fa.netlify.app']
 
 
 # Application definition
