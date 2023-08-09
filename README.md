@@ -7,5 +7,4 @@ Run server in production using "gunicorn -w 4 blogwebsite.wsgi:application"
 
 ##### Front-End at https://github.com/bhanusankhyan/blog_website_view 
 
-Blog Site can be found at
-#### https://blog-site-96wu.onrender.com/
+#### Blog Site is live at https://blog-site-96wu.onrender.com/
