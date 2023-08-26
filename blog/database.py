@@ -58,7 +58,7 @@ def get_blog(id):
         user = db.users.find({ "_id": ObjectId(item['user_id']) })
         # print(user)
         for a in user:
-            print(a['name'])
+            # print(a['name'])
             item['user_name'] = a['name']
             item['user_email'] = a['email']
         for comment in item['comments']:
@@ -78,7 +78,7 @@ def post_comment(id, comment, user_id):
         '$push': {'comments': {'user_id': user_id, 'comment':comment, 'time': now.strftime("%d/%m/%Y %H:%M:%S")}}
     }
     )
-    print(resp)
+    # print(resp)
     return True
 
 
@@ -87,13 +87,13 @@ def check_login(email, password):
     "email": email,
     "password": password
     })
-    print(type(resp))
-    print(resp)
+    # print(type(resp))
+    # print(resp)
     if resp == None:
         return {'success': False}
     resp['_id'] = str(resp['_id'])
     resp['success'] = True
-    print(resp)
+    # print(resp)
     return resp
 
 def sign_up(name, password, email):
@@ -142,3 +142,20 @@ def blogs_tag(tag, page):
         data.append(item)
 
     return {'resp': data, 'pageCount': pageCount}
+
+def delete_blog(blog_id, user_id):
+    delete = db.blogs.remove({"_id": ObjectId(blog_id), "user_id": ObjectId(user_id)} , {"justOne": True})
+    if delete.get('n', None) == 1:
+        return {'success': True}
+    else:
+        return {'success': False}
+
+def delete_comment(blog_id, user_id, comment):
+    delete = db.blogs.update({"_id": ObjectId(blog_id)}, {
+    "$pull": {"comments": {"user_id": user_id, "comment":comment}}
+    })
+    print(delete)
+    if delete.get('nModified', None) == 1:
+        return {'success': True}
+    else:
+        return {'success': False}

@@ -1,7 +1,7 @@
 from django.shortcuts import render
 import json
 from django.http import JsonResponse
-from .database import insert_blog, get_blogs, get_blog, post_comment, check_login, sign_up, blogs_tag
+from .database import insert_blog, get_blogs, get_blog, post_comment, check_login, sign_up, blogs_tag, delete_blog, delete_comment
 from bson.objectid import ObjectId
 from django.http import HttpResponse
 
@@ -93,4 +93,20 @@ def blogsTag(request):
         data = json.loads(data)
         resp = blogs_tag(data['tag'], data['page'])
         # print(resp)
+        return HttpResponse(json.dumps(resp), content_type="application/json")
+
+@csrf_exempt
+def deleteBlog(request):
+    if request.method == 'DELETE':
+        data = request.body
+        data = json.loads(data)
+        resp = delete_blog(data['blog_id'], data['user_id'])
+        return HttpResponse(json.dumps(resp), content_type="application/json")
+
+@csrf_exempt
+def deleteComment(request):
+    if request.method == "DELETE":
+        data = request.body
+        data = json.loads(data)
+        resp = delete_comment(data['blog_id'], data['user_id'], data['comment'])
         return HttpResponse(json.dumps(resp), content_type="application/json")
