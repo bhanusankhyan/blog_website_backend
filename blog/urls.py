@@ -12,5 +12,6 @@ urlpatterns = [
     path('sign_up', views.signUp, name="signUp"),
     path('blogs_tag', views.blogsTag, name="blogs_tag"),
     path('delete_blog', views.deleteBlog, name="delete_blog"),
-    path('delete_comment', views.deleteComment, name="delete_comment")
+    path('delete_comment', views.deleteComment, name="delete_comment"),
+    path('forgot_password', views.forgotPassword, name="forgot_password"),
 ]

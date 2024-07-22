@@ -7,7 +7,7 @@ import math
 now = datetime.now()
 
 def insert_blog(title, description, image, tags, user_id):
-    db.blogs.insert_one(
+    insertBlog = db.blogs.insert_one(
     {
         'title': title,
         'description': description,
@@ -18,10 +18,14 @@ def insert_blog(title, description, image, tags, user_id):
         'comments': []
     }
     )
+    if insertBlog.acknowledged == True:
+        return {'acknowledgment': 'success', '_id' :str(insertBlog.inserted_id)}
+    else:
+        return {'acknowledgment': 'failure'}
 
 def get_blogs(page):
 
-    pageCount = math.ceil(db.blogs.find({}).count()/6)
+    pageCount = math.ceil((db.blogs.find({}).count()-1)/6)
     blog_limit = 0
     blog_skip = 0
     if page == 1:
@@ -49,26 +53,27 @@ def get_blogs(page):
     return resp
 
 def get_blog(id):
-    blog = db.blogs.find({"_id": ObjectId(id) })
-    data = []
-    for item in blog:
-        item['_id'] = str(item['_id'])
-        item['user_id'] = str(item['user_id'])
-        item['image'] = base64.b64encode(item['image']).decode('utf-8')
-        user = db.users.find({ "_id": ObjectId(item['user_id']) })
-        # print(user)
-        for a in user:
-            # print(a['name'])
-            item['user_name'] = a['name']
-            item['user_email'] = a['email']
-        for comment in item['comments']:
-            u = db.users.find({"_id": ObjectId(comment['user_id'])})
-            for _ in u:
-                comment['user_name'] = _['name']
-        data.append(item)
-    # print(data)
-    return data
-    # print(blog)
+    try:
+        blog = db.blogs.find({"_id": ObjectId(id) })
+        data = []
+        for item in blog:
+            item['_id'] = str(item['_id'])
+            item['user_id'] = str(item['user_id'])
+            item['image'] = base64.b64encode(item['image']).decode('utf-8')
+            user = db.users.find({ "_id": ObjectId(item['user_id']) })
+            # print(user)
+            for a in user:
+                # print(a['name'])
+                item['user_name'] = a['name']
+                item['user_email'] = a['email']
+            for comment in item['comments']:
+                u = db.users.find({"_id": ObjectId(comment['user_id'])})
+                for _ in u:
+                    comment['user_name'] = _['name']
+            data.append(item)
+        return {'success':True, 'res': data}
+    except:
+        return {'success': False}
 
 def post_comment(id, comment, user_id):
     resp = db.blogs.update({
@@ -159,3 +164,12 @@ def delete_comment(blog_id, user_id, comment):
         return {'success': True}
     else:
         return {'success': False}
+
+def forgot_password(email, password):
+    res = db.users.update({"email": email},{
+    "$set": {'password': password}
+    })
+    if res['updatedExisting'] == True:
+        return True
+    else:
+        return False
